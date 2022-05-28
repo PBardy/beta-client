@@ -1,5 +1,5 @@
 import { View, TextInput, TouchableOpacity, Image, ScrollView } from 'react-native';
-import React from 'react';
+import React, { useState } from 'react';
 import tw from '@config/tailwind.config';
 import XButton from '@components/XButton/XButton';
 import XText from '@components/Typography/XText/XText';
@@ -16,6 +16,11 @@ import AmountSelector from '@components/Modals/AmountSelector/AmountSelector';
 import XHeading4 from '@components/Typography/XHeading4/XHeading4';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import XParagraph from '@components/XParagraph/XParagraph';
+import ProductSelector from '@components/Modals/ProductSelector/ProductSelector';
+import { useUserProducts } from '@hooks/useUserProducts';
+import { DatePickerModal } from 'react-native-paper-dates';
+import { useServices } from '@contexts/service.context';
+import CategorySelector from '@components/Modals/CategorySelector/CategorySelector';
 
 type Form = {
   name: string;
@@ -46,9 +51,16 @@ const validationSchema = object().shape({
 });
 
 const CreateUserProductScreen = () => {
+  // Hooks
   const modal = useModal();
+  const services = useServices();
   const dispatch = useAppDispatch();
   const isFetching = useIsFetching('products/create-one');
+  const products = useUserProducts();
+
+  // State
+  const [showExpiry, setShowExpiry] = useState<boolean>(false);
+  const [showBestBefore, setShowBestBefore] = useState<boolean>(false);
 
   const onSubmit = (values: Form) => {
     if (form.isValid) {
@@ -89,7 +101,30 @@ const CreateUserProductScreen = () => {
     );
   };
 
-  const editCategories = () => {};
+  const editExpiry = (change: any) => {
+    setShowExpiry(false);
+
+    const value = change.date;
+    if (services.dates.isBeforeToday(value)) {
+      return;
+    }
+
+    form.setFieldValue('expiryDate', value);
+  };
+
+  const editBestBefore = (change: any) => {
+    setShowBestBefore(false);
+    const value = change.date;
+  };
+
+  // TODO: change to user categories selector
+  const editCategories = () => {
+    modal.openModal(<CategorySelector {...modal} min={1} max={1} onSelect={() => {}} />);
+  };
+
+  const editExistingProduct = () => {
+    modal.openModal(<ProductSelector {...modal} min={1} max={1} />);
+  };
 
   const form = useFormik({
     onSubmit,
@@ -113,7 +148,7 @@ const CreateUserProductScreen = () => {
               </View>
               <XParagraph style={tw.style('text-white mt-2 mb-4')}>
                 Never added this product before? Specify its name and upload a picture so you can
-                find it later, otherwise choose an existing one.
+                find it later{products.length ? ', otherwise choose an existing one' : '.'}.
               </XParagraph>
               <View style={tw.style('flex flex-row')}>
                 <View style={tw.style('h-full mr-2')}>
@@ -149,11 +184,14 @@ const CreateUserProductScreen = () => {
                   />
                 </View>
               </View>
-              <View style={tw.style('bg-white rounded-lg mt-4')}>
-                <Button uppercase={false} onPress={editCategories}>
-                  <XText style={tw.style('text-primary')}>...or use existing</XText>
-                </Button>
-              </View>
+              {/* Only show if these can choose an existing product */}
+              {products.length ? (
+                <View style={tw.style('bg-white rounded-lg mt-4')}>
+                  <Button uppercase={false} onPress={editExistingProduct}>
+                    <XText style={tw.style('text-primary')}>...or use existing</XText>
+                  </Button>
+                </View>
+              ) : null}
             </View>
             <View style={tw.style('p-4 bg-white')}>
               <View style={tw.style('flex flex-row items-center')}>
@@ -171,14 +209,14 @@ const CreateUserProductScreen = () => {
                 alerts.
               </XParagraph>
               <View style={tw.style('bg-primary rounded-lg my-1')}>
-                <Button uppercase={false} onPress={editCategories}>
+                <Button uppercase={false} onPress={() => setShowBestBefore(true)}>
                   <XText style={tw.style('text-white')}>
                     Best Before: {form.values.bestBeforeDate.toLocaleDateString()}
                   </XText>
                 </Button>
               </View>
               <View style={tw.style('bg-primary rounded-lg my-1')}>
-                <Button uppercase={false} onPress={editCategories}>
+                <Button uppercase={false} onPress={() => setShowExpiry(true)}>
                   <XText style={tw.style('text-white')}>
                     Expires: {form.values.expiryDate.toLocaleDateString()}
                   </XText>
@@ -268,6 +306,29 @@ const CreateUserProductScreen = () => {
           ) : null}
         </ScrollView>
       </View>
+      {/* Date picker modals */}
+      <React.Fragment>
+        <DatePickerModal
+          startDate={new Date()}
+          locale='en-GB'
+          mode='single'
+          visible={showExpiry}
+          onDismiss={() => setShowExpiry(false)}
+          date={form.values.expiryDate}
+          onConfirm={editExpiry}
+          validRange={{ startDate: new Date() }}
+        />
+        <DatePickerModal
+          startDate={new Date()}
+          locale='en-GB'
+          mode='single'
+          visible={showBestBefore}
+          onDismiss={() => setShowBestBefore(false)}
+          date={form.values.bestBeforeDate}
+          onConfirm={editBestBefore}
+          validRange={{ startDate: new Date() }}
+        />
+      </React.Fragment>
     </SafeAreaView>
   );
 };

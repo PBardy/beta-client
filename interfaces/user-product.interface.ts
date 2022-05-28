@@ -1,7 +1,9 @@
 import { IBaseService } from './base.interface';
 import type { IModel } from './model.interface';
+import type { IProduct } from './product.interface';
+import type { IUser } from './user.interface';
 
-export interface IUserProduct extends IModel {}
+export interface IUserProduct extends IModel, IUser, IProduct {}
 
 export interface IUserProductService extends IBaseService {
   getAll(): Promise<Array<IUserProduct>>;

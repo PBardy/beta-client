@@ -72,7 +72,7 @@ const CreateProductScreen = () => {
                   <View style={styles.imagePicker}>
                     <IconButton icon='image' color={tw.color('white')} onPress={pickImage} />
                   </View>
-                  <Image style={styles.image} source={{ uri: form.values.thumbnail }} />
+                  <Image style={tw.style('w-30 h-30')} source={{ uri: form.values.thumbnail }} />
                 </TouchableOpacity>
               </View>
             </View>
@@ -104,7 +104,6 @@ const CreateProductScreen = () => {
 };
 
 const styles = StyleSheet.create({
-  image: tw.style('w-30 h-30'),
   imageTouch: tw.style('flex-1'),
   imagePicker: tw.style('flex-1 w-full h-full flex flex-row items-center justify-center absolute'),
   imageContainer: tw.style('bg-primary w-30 h-full bg-black rounded-l-lg relative'),

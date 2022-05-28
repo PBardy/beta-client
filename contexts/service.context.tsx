@@ -1,7 +1,11 @@
-import { IAuthService } from '@interfaces/auth.interface';
-import { ICategoryService } from '@interfaces/category.interface';
-import { ILocationService } from '@interfaces/location.interface';
-import { IProductService } from '@interfaces/product.interface';
+import type { IAuthService } from '@interfaces/auth.interface';
+import type { ICategoryService } from '@interfaces/category.interface';
+import type { IDateService } from '@interfaces/date.interface';
+import type { ILocationService } from '@interfaces/location.interface';
+import type { INumberService } from '@interfaces/number.interface';
+import type { IProductService } from '@interfaces/product.interface';
+import { DateService } from '@services/date.service';
+import { NumberService } from '@services/number.service';
 import { createContext, useContext, useMemo } from 'react';
 import { AuthService } from '../services/auth.service';
 import { CategoryService } from '../services/category.service';
@@ -14,6 +18,8 @@ type Props = {
 
 export type IServices = {
   auth: IAuthService;
+  dates: IDateService;
+  number: INumberService;
   product: IProductService;
   category: ICategoryService;
   location: ILocationService;
@@ -21,6 +27,8 @@ export type IServices = {
 
 export const services: IServices = {
   auth: new AuthService(),
+  dates: new DateService(),
+  number: new NumberService(),
   product: new ProductsService(),
   category: new CategoryService(),
   location: new LocationService(),

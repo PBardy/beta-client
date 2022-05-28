@@ -1,5 +1,5 @@
-import { IBaseService } from './base.interface';
-import { IModel } from './model.interface';
+import type { IBaseService } from './base.interface';
+import type { IModel } from './model.interface';
 
 export interface ICategory extends IModel {
   name: string;

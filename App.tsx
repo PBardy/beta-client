@@ -23,6 +23,10 @@ import {
 import { Subscription } from 'expo-modules-core';
 import { ModalProvider } from '@contexts/modal.context';
 import { ServiceProvider } from '@contexts/service.context';
+import { enGB, registerTranslation } from 'react-native-paper-dates';
+
+// Boostrap app
+registerTranslation('en-GB', enGB);
 
 function App() {
   useNotifications();
@@ -63,7 +67,7 @@ function App() {
         <PaperProvider theme={theme}>
           <ServiceProvider>
             <ModalProvider>
-              <Navigation colorScheme={colorScheme} />
+              <Navigation />
               <StatusBar />
             </ModalProvider>
           </ServiceProvider>
