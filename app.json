@@ -19,7 +19,10 @@
       "**/*"
     ],
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "infoPlist": {
+        "NSFaceIDUsageDescription": "Biometric authentication is needed for automatic login."
+      }
     },
     "android": {
       "adaptiveIcon": {
@@ -29,6 +32,11 @@
     },
     "web": {
       "favicon": "./assets/images/favicon.png"
-    }
+    },
+    "plugins": [
+      ["expo-image-picker", {
+        "photosPermission": "The app accesses your photos so you can better identify your products and locations."
+      }]
+    ]
   }
 }
