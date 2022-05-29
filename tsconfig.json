@@ -1,6 +1,9 @@
 {
   "extends": "expo/tsconfig.base",
+  "include": ["./**/*"],
+  "exclude": ["node_modules"],
   "compilerOptions": {
+    "baseUrl": ".",
     "strict": true,
     "strictPropertyInitialization": false,
     "paths": {

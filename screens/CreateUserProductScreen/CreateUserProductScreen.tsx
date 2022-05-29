@@ -19,7 +19,6 @@ import ProductSelector from '@components/Modals/ProductSelector/ProductSelector'
 import { useUserProducts } from '@hooks/useUserProducts';
 import { DatePickerModal } from 'react-native-paper-dates';
 import { useServices } from '@contexts/service.context';
-import CategorySelector from '@components/Modals/CategorySelector/CategorySelector';
 import { createOneUserProductThunk } from '@redux/thunks/user-products.thunk';
 import { AnyAsyncThunk, RejectedActionFromAsyncThunk } from '@reduxjs/toolkit/dist/matchers';
 import ErrorModal from '@components/Modals/ErrorModal/ErrorModal';
@@ -88,7 +87,7 @@ const CreateUserProductScreen = () => {
     });
 
     if (!result.cancelled) {
-      form.setFieldValue('thumbnail', result.uri);
+      form.setFieldValue('thumbnail', result);
     }
   };
 
@@ -344,28 +343,26 @@ const CreateUserProductScreen = () => {
         </ScrollView>
       </View>
       {/* Date picker modals */}
-      <React.Fragment>
-        <DatePickerModal
-          startDate={new Date()}
-          locale='en-GB'
-          mode='single'
-          visible={showExpiry}
-          onDismiss={() => setShowExpiry(false)}
-          date={form.values.expiryDate}
-          onConfirm={editExpiry}
-          validRange={{ startDate: new Date() }}
-        />
-        <DatePickerModal
-          startDate={new Date()}
-          locale='en-GB'
-          mode='single'
-          visible={showBestBefore}
-          onDismiss={() => setShowBestBefore(false)}
-          date={form.values.bestBeforeDate}
-          onConfirm={editBestBefore}
-          validRange={{ startDate: new Date() }}
-        />
-      </React.Fragment>
+      <DatePickerModal
+        startDate={new Date()}
+        locale='en-GB'
+        mode='single'
+        visible={showExpiry}
+        onDismiss={() => setShowExpiry(false)}
+        date={form.values.expiryDate}
+        onConfirm={editExpiry}
+        validRange={{ startDate: new Date() }}
+      />
+      <DatePickerModal
+        startDate={new Date()}
+        locale='en-GB'
+        mode='single'
+        visible={showBestBefore}
+        onDismiss={() => setShowBestBefore(false)}
+        date={form.values.bestBeforeDate}
+        onConfirm={editBestBefore}
+        validRange={{ startDate: new Date() }}
+      />
     </SafeAreaView>
   );
 };

@@ -24,6 +24,7 @@ module.exports = function(api) {
           "@services": "./services"
         }
       }],
+     ['react-native-reanimated/plugin'],
     ]
   };
 };
