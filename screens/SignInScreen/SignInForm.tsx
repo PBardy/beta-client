@@ -12,10 +12,7 @@ import XLink from '@components/Typography/XLink/XLink';
 import { useGoToForgotPassword } from '@hooks/useGoToForgotPassword';
 import { useIsFetching } from '@hooks/useIsFetching';
 import SignInError from './SignInError';
-import { useServices } from '@contexts/service.context';
-import { start, stop } from '@redux/actions/api';
-import { signInAction } from '@redux/actions/auth';
-import { setUserAction } from '@redux/actions/user';
+import { signInThunk } from '@redux/thunks/auth.thunk';
 
 interface Form {
   email: string;
@@ -38,25 +35,16 @@ const validationSchema = Yup.object().shape({
 });
 
 const SignInForm = () => {
-  const services = useServices();
   const dispatch = useAppDispatch();
   const isFetching = useIsFetching('auth/sign-in');
   const forgotPassword = useGoToForgotPassword();
 
-  const onSubmit = async (values: Form) => {
-    dispatch(start('auth/sign-in'));
-    const data = await services.auth.signIn(values);
-    dispatch(signInAction(data.token));
-    dispatch(setUserAction(data.user));
-    dispatch(stop('auth/sign-in'));
+  const onSubmit = (values: Form) => {
+    dispatch(signInThunk(values));
   };
 
   const onLongPress = async () => {
-    dispatch(start('auth/sign-in'));
-    const data = await services.auth.signIn(user);
-    dispatch(signInAction(data.token));
-    dispatch(setUserAction(data.user));
-    dispatch(stop('auth/sign-in'));
+    dispatch(signInThunk(user));
   };
 
   const form = useFormik({

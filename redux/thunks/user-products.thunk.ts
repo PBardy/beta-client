@@ -1,6 +1,7 @@
 import { ApiResponse } from '@interfaces/api.interface';
 import { IProduct } from '@interfaces/product.interface';
 import { GetThunkAPI } from '@interfaces/redux.interface';
+import { IUserProduct } from '@interfaces/user-product.interface';
 import { start, stop } from '@redux/actions/api';
 import {
   userProductsCreateMany,
@@ -18,7 +19,7 @@ import { AxiosResponse } from 'axios';
 import { UserProductsService } from '../../services/user-product.service';
 
 // Alias types
-type M = IProduct;
+type M = IUserProduct;
 type A<T> = AxiosResponse<ApiResponse<T>>;
 
 const userProductsService = new UserProductsService();

@@ -1,4 +1,10 @@
-import { signInAction, signOutAction, signUpAction } from '@redux/actions/auth';
+import { storage } from '@config/storage.config';
+import {
+  saveAuthCredsAction,
+  signInAction,
+  signOutAction,
+  signUpAction,
+} from '@redux/actions/auth';
 import { createReducer } from '@reduxjs/toolkit';
 
 export interface IAuthState {
@@ -28,5 +34,9 @@ export const authReducer = createReducer(state, (builder) => {
     state.signedIn = false;
     state.signedOut = true;
     state.token = null;
+  });
+  builder.addCase(saveAuthCredsAction, (state, action) => {
+    storage.setItem('email', action.payload.email);
+    storage.setItem('password', action.payload.password);
   });
 });

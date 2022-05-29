@@ -6,7 +6,6 @@ import XText from '@components/Typography/XText/XText';
 import { Button, IconButton, List } from 'react-native-paper';
 import { useFormik } from 'formik';
 import { useAppDispatch } from '@hooks/useAppSelector';
-import { createOneProductThunk } from '@redux/thunks/products.thunk';
 import { useIsFetching } from '@hooks/useIsFetching';
 import { ICategory } from '@interfaces/category.interface';
 import { date, object, string } from 'yup';
@@ -21,6 +20,11 @@ import { useUserProducts } from '@hooks/useUserProducts';
 import { DatePickerModal } from 'react-native-paper-dates';
 import { useServices } from '@contexts/service.context';
 import CategorySelector from '@components/Modals/CategorySelector/CategorySelector';
+import { createOneUserProductThunk } from '@redux/thunks/user-products.thunk';
+import { AnyAsyncThunk, RejectedActionFromAsyncThunk } from '@reduxjs/toolkit/dist/matchers';
+import ErrorModal from '@components/Modals/ErrorModal/ErrorModal';
+import { useBottomSheet } from '@contexts/bottom-sheet.context';
+import CategoriesSelector from '@components/BottomSheets/CategoriesSelector/CategoriesSelector';
 
 type Form = {
   name: string;
@@ -57,14 +61,21 @@ const CreateUserProductScreen = () => {
   const dispatch = useAppDispatch();
   const isFetching = useIsFetching('products/create-one');
   const products = useUserProducts();
+  const bottomSheet = useBottomSheet();
 
   // State
   const [showExpiry, setShowExpiry] = useState<boolean>(false);
   const [showBestBefore, setShowBestBefore] = useState<boolean>(false);
 
-  const onSubmit = (values: Form) => {
+  const onSubmit = async (values: Form) => {
     if (form.isValid) {
-      dispatch(createOneProductThunk(values));
+      const result = await dispatch(createOneUserProductThunk(values));
+      if (result.type.endsWith('rejected')) {
+        const rejected = result as RejectedActionFromAsyncThunk<AnyAsyncThunk>;
+        const title = rejected.error.name;
+        const message = rejected.error.message;
+        modal.openModal(<ErrorModal {...modal} title={title} message={message} />);
+      }
     }
   };
 
@@ -106,6 +117,8 @@ const CreateUserProductScreen = () => {
 
     const value = change.date;
     if (services.dates.isBeforeToday(value)) {
+      // TODO: handle this situation
+      // something weird is happening
       return;
     }
 
@@ -114,12 +127,22 @@ const CreateUserProductScreen = () => {
 
   const editBestBefore = (change: any) => {
     setShowBestBefore(false);
+
     const value = change.date;
+    if (services.dates.isBeforeToday(value)) {
+      // TODO: handle this situation
+      // something weird is happening
+      return;
+    }
+
+    form.setFieldValue('bestBeforeDate', value);
   };
 
   // TODO: change to user categories selector
   const editCategories = () => {
-    modal.openModal(<CategorySelector {...modal} min={1} max={1} onSelect={() => {}} />);
+    bottomSheet.open(<CategoriesSelector />);
+
+    //modal.openModal(<CategorySelector {...modal} min={1} max={1} onConfirm={() => {}} />);
   };
 
   const editExistingProduct = () => {
@@ -190,6 +213,20 @@ const CreateUserProductScreen = () => {
                   <Button uppercase={false} onPress={editExistingProduct}>
                     <XText style={tw.style('text-primary')}>...or use existing</XText>
                   </Button>
+                </View>
+              ) : null}
+              {/* Section 1 error messages */}
+              {form.errors.name ? (
+                <View style={tw.style('bg-error rounded-lg mt-2 px-2 py-1')}>
+                  <View style={tw.style('flex flex-row items-center')}>
+                    <IconButton
+                      size={16}
+                      icon='exclamation'
+                      color={tw.color('error')}
+                      style={tw.style('bg-white')}
+                    />
+                    <XText style={tw.style('text-white')}>Name field is required</XText>
+                  </View>
                 </View>
               ) : null}
             </View>

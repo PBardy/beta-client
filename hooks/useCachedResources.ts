@@ -1,4 +1,6 @@
+import { storage } from '@config/storage.config';
 import { FontAwesome } from '@expo/vector-icons';
+import { signInThunk } from '@redux/thunks/auth.thunk';
 import { getAllCategoriesThunk } from '@redux/thunks/categories.thunk';
 import { getAllLocationsThunk } from '@redux/thunks/locations.thunk';
 import { getAllProductsThunk } from '@redux/thunks/products.thunk';
@@ -17,6 +19,14 @@ export default function useCachedResources() {
     async function loadResourcesAndDataAsync() {
       try {
         SplashScreen.preventAutoHideAsync();
+
+        // Restore cache to state
+        const email = storage.getItem('email');
+        const password = storage.getItem('password');
+
+        if (email && password) {
+          dispatch(signInThunk({ email, password }));
+        }
 
         // Preload resources
         dispatch(getAllProductsThunk());

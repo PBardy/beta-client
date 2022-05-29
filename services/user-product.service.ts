@@ -63,7 +63,7 @@ export class UserProductsService extends BaseService implements IUserProductServ
    * @returns
    */
   public async createOne(payload: Partial<IUserProduct>): Promise<IUserProduct> {
-    const res = await http.post<Partial<M>, A<M>>('/user/product', payload);
+    const res = await http.post<Partial<M>, A<M>>('/user/products', payload);
     const data = res.data.data;
     const product = await UserProduct.validateOne(data);
 
@@ -93,7 +93,7 @@ export class UserProductsService extends BaseService implements IUserProductServ
    * @returns
    */
   public async updateOne(payload: IUserProduct): Promise<IUserProduct> {
-    const res = await http.put<void, A<M>>('/user/product/' + payload.uuid);
+    const res = await http.put<void, A<M>>('/user/products/' + payload.uuid);
     const data = res.data.data;
     const product = await UserProduct.validateOne(data);
 
@@ -122,7 +122,7 @@ export class UserProductsService extends BaseService implements IUserProductServ
    * @returns
    */
   public async deleteOne(uuid: string): Promise<IUserProduct> {
-    const res = await http.delete<void, A<M>>('/user/product/' + uuid);
+    const res = await http.delete<void, A<M>>('/user/products/' + uuid);
     const data = res.data.data;
     const product = await UserProduct.validateOne(data);
 

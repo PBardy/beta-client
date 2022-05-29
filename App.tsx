@@ -1,3 +1,5 @@
+import 'react-native-gesture-handler';
+
 import useCachedResources from '@hooks/useCachedResources';
 import { useAppColorScheme, useDeviceContext } from 'twrnc';
 import { StatusBar } from 'expo-status-bar';
@@ -24,6 +26,8 @@ import { Subscription } from 'expo-modules-core';
 import { ModalProvider } from '@contexts/modal.context';
 import { ServiceProvider } from '@contexts/service.context';
 import { enGB, registerTranslation } from 'react-native-paper-dates';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
+import { BottomSheetProvider } from '@contexts/bottom-sheet.context';
 
 // Boostrap app
 registerTranslation('en-GB', enGB);
@@ -65,12 +69,16 @@ function App() {
     return (
       <SafeAreaProvider>
         <PaperProvider theme={theme}>
-          <ServiceProvider>
-            <ModalProvider>
-              <Navigation />
-              <StatusBar />
-            </ModalProvider>
-          </ServiceProvider>
+          <GestureHandlerRootView style={tw.style('flex-1')}>
+            <BottomSheetProvider>
+              <ModalProvider>
+                <ServiceProvider>
+                  <Navigation />
+                  <StatusBar />
+                </ServiceProvider>
+              </ModalProvider>
+            </BottomSheetProvider>
+          </GestureHandlerRootView>
         </PaperProvider>
       </SafeAreaProvider>
     );

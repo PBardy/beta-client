@@ -9,7 +9,7 @@ export type IModalContext = {
 };
 
 type Props = {
-  children?: React.ReactNode[];
+  children?: React.ReactNode | React.ReactNode[];
 };
 
 export const ModalContext = createContext<IModalContext>({
