@@ -37,6 +37,7 @@ export const BottomSheetProvider = ({ children }: Props) => {
   }, []);
 
   const close = useCallback(() => {
+    console.log('closing');
     setContent(null);
     bottomSheetRef.current?.collapse();
   }, []);
